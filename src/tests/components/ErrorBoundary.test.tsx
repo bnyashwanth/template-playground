@@ -17,7 +17,7 @@ describe("ErrorBoundary", () => {
 
   beforeEach(() => {
     // Suppress console.error for cleaner test output
-    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -50,10 +50,14 @@ describe("ErrorBoundary", () => {
 
   it("should render reload button that calls window.location.reload", () => {
     const reloadMock = vi.fn();
-    // Mock the entire location object
-    const originalLocation = window.location;
-    delete (window as any).location;
-    window.location = { ...originalLocation, reload: reloadMock } as any;
+    const locationDescriptor = Object.getOwnPropertyDescriptor(window, "location");
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        ...window.location,
+        reload: reloadMock,
+      },
+    });
 
     render(
       <ErrorBoundary>
@@ -68,8 +72,9 @@ describe("ErrorBoundary", () => {
     expect(reloadMock).toHaveBeenCalledTimes(1);
 
     // Restore original location
-    delete (window as any).location;
-    window.location = originalLocation as any;
+    if (locationDescriptor) {
+      Object.defineProperty(window, "location", locationDescriptor);
+    }
   });
 
   it("should display error details in development mode", () => {

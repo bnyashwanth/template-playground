@@ -15,6 +15,8 @@ export async function validateBeforeRebuild(
   model: string,
   data: string
 ): Promise<void> {
+  await Promise.resolve();
+
   // 1. Validate JSON (fastest check)
   try {
     JSON.parse(data);

@@ -79,7 +79,10 @@ interface MockCanvasContext {
 }
 
 // capture original method so we can delegate for non-2d calls
-const originalGetContext = HTMLCanvasElement.prototype.getContext as (
+const originalGetContext = Object.getOwnPropertyDescriptor(
+  HTMLCanvasElement.prototype,
+  'getContext'
+)?.value as (
   this: HTMLCanvasElement,
   contextId: string,
   options?: unknown
@@ -123,5 +126,8 @@ HTMLCanvasElement.prototype.getContext = function (
   }
 
   // for other context types, delegate to original
+  if (!originalGetContext) {
+    return null;
+  }
   return originalGetContext.call(this, contextId, options);
 } as unknown as typeof HTMLCanvasElement.prototype.getContext;
