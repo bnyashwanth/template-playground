@@ -168,7 +168,7 @@ export async function deriveEncryptionKey(
         throw new Error('PRF extension did not return results. Authentication failed.');
     }
 
-    const ikm = prfResults.first ;
+    const ikm = prfResults.first;
 
     // Import the PRF output as raw key material for HKDF
     const hkdfKey = await crypto.subtle.importKey(

@@ -159,7 +159,10 @@ const AIConfigPopup = ({ isOpen, onClose }: AIConfigPopupProps) => {
 
   useEffect(() => {
     setAvailableModels([]);
-    if (!provider || !debouncedApiKey) return;
+    if (!provider) return;
+
+    const requiresApiKey = provider !== 'ollama';
+    if (requiresApiKey && !debouncedApiKey) return;
 
     const controller = new AbortController();
     const signal = controller.signal;

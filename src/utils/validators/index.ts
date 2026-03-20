@@ -10,13 +10,13 @@ import { ModelManager } from "@accordproject/concerto-core";
  * @param data - JSON data string
  * @throws Error with specific validation message if any input is invalid
  */
+// Keep async signature so callers can uniformly await validation before rebuild.
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function validateBeforeRebuild(
   _template: string,
   model: string,
   data: string
 ): Promise<void> {
-  await Promise.resolve();
-
   // 1. Validate JSON (fastest check)
   try {
     JSON.parse(data);
