@@ -179,12 +179,15 @@ export async function deriveEncryptionKey(
         ['deriveKey']
     );
 
+    // Ensure salt is backed by ArrayBuffer (not SharedArrayBuffer) for TS BufferSource compatibility.
+    const hkdfSalt = new Uint8Array(salt);
+
     // Derive an AES-GCM key using HKDF
     const aesKey = await crypto.subtle.deriveKey(
         {
             name: 'HKDF',
             hash: 'SHA-256',
-            salt,
+            salt: hkdfSalt,
             info: HKDF_INFO,
         },
         hkdfKey,
